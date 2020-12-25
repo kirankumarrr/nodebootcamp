@@ -2,6 +2,7 @@ const express = require('express')
 const dotenv = require('dotenv')
 const colors = require('colors')
 const connectDB = require('./config/db')
+const errorHandler = require('./middelware/error')
 
 // const logger =require('./middelware/logger')
 const morgan  = require('morgan')
@@ -25,13 +26,14 @@ if(process.env.NODE_EVN==='development'){
   app.use(morgan('dev'))
 }
 
-// app.use(logger)
+
 
 //Mount routers
 app.use('/api/v1/bootcamps',bootcamps)
 
-
-
+//Note : make sure it shoulb be always below the route
+// app.use(logger)
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000
 
