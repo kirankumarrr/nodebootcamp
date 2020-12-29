@@ -9,7 +9,9 @@
     "express": "^4.17.1",
     "http": "^0.0.1-security",
     "mongoose": "^5.11.8",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "node-geocoder": "^3.27.0",
+    "slugify": "^1.4.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
