@@ -112,22 +112,22 @@ BootcampSchema.pre('save',function(next){
 
 //TODO: Fix this: API KEY is not accepting
 // Geocode & create location field
-// BootcampSchema.pre('save',async function(next){
-//   const loc = await geocoder.geocode(this.address)
-//   const initialLocation = loc[0]
-//   this.location ={
-//     type : 'Point',
-//     coordinates:[initialLocation.longitude, initialLocation.latitude],
-//     formattedAddress:initialLocation.formattedAddress,
-//     street:initialLocation.streetName,
-//     city:initialLocation.city,
-//     state:initialLocation.stateCode,
-//     zipcode:initialLocation.zipcode,
-//     country:initialLocation.countryCode
+BootcampSchema.pre('save',async function(next){
+  const loc = await geocoder.geocode(this.address)
+  const initialLocation = loc[0]
+  this.location ={
+    type : 'Point',
+    coordinates:[initialLocation.longitude, initialLocation.latitude],
+    formattedAddress:initialLocation.formattedAddress,
+    street:initialLocation.streetName,
+    city:initialLocation.city,
+    state:initialLocation.stateCode,
+    zipcode:initialLocation.zipcode,
+    country:initialLocation.countryCode
 
-//   }
-//   //Do not save address in DB
-//   this.address = undefined
-//   next();
-// })
+  }
+  //Do not save address in DB
+  this.address = undefined
+  next();
+})
 module.exports = mongoose.model('Bootcamp',BootcampSchema)
