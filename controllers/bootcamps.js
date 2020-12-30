@@ -13,8 +13,11 @@ exports.getBootCamps = asyncHandler(async (req, res, next) => {
 
    const reqQuery = {...req.query}
 
-   //Fields to exclude
-   const removeFields = ['select']
+   /**
+    * @desc :Reason to Fields to exclude
+    *       :get all the records without any quertString
+   */
+   const removeFields = ['select','sort']
 
    //loops and remove fields
    removeFields.forEach(param=>delete reqQuery[param])
