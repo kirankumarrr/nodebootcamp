@@ -11,6 +11,7 @@ const morgan = require('morgan');
 //Routes
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
+const auth = require('./routes/auth');
 const { Server } = require('http');
 
 //Load env var's
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
+app.use('/api/v1/auth', auth);
 
 //Note : make sure it shoulb be always below the route
 // app.use(logger)
