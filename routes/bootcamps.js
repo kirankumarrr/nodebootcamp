@@ -6,6 +6,7 @@ const {
   updateBootCamp,
   deleteBootCamp,
   getBootCampsInRadius,
+  bootCampPhotoUpload,
 } = require('../controllers/bootcamps');
 
 const router = express.Router();
@@ -26,5 +27,7 @@ router
   .get(getBootCamp)
   .put(updateBootCamp)
   .delete(deleteBootCamp);
+
+router.route('/:id/photo').put(bootCampPhotoUpload);
 
 module.exports = router;
