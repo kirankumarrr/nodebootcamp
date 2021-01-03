@@ -1,7 +1,9 @@
 const path = require('path');
 const ErrorResponse = require('../utlis/errorResponse');
 const asyncHandler = require('../middelware/async');
-
+const dotenv = require('dotenv');
+//Load env var's
+dotenv.config({ path: './config/config.env' });
 const User = require('../models/User');
 
 /*
@@ -25,10 +27,7 @@ exports.register = asyncHandler(async (req, res, next) => {
    * @method: Called on the actaull user which got from Model
    */
 
-  //Create token
-  const token = user.getSignedJwtToken();
-
-  res.status(200).json({ success: true, token });
+  sendTokenResponse(user, 200, res);
 });
 
 /*
@@ -58,8 +57,24 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Invalid credentails', 401));
   }
 
+  sendTokenResponse(user, 200, res);
+});
+
+//Get token from model, create cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
   //Create token
   const token = user.getSignedJwtToken();
 
-  res.status(200).json({ success: true, token });
-});
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  };
+
+  res.status(statusCode).cookie('token', token, options).json({
+    success: true,
+    token,
+  });
+};
