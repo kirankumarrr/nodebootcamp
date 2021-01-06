@@ -12,8 +12,6 @@ const Courses = require('../models/Courses');
  */
 
 exports.getCourses = asyncHandler(async (req, res, next) => {
-  let query;
-
   if (req.params.bootcampId) {
     const courses = await Course.find({ bootcamp: req.params.bootcampId });
     return res.status(200).json({
@@ -58,6 +56,10 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 exports.addCourse = asyncHandler(async (req, res, next) => {
   //Assign Id to bootcamp inside course Object
   req.body.bootcamp = req.params.bootcampId;
+  //Add user to req.body
+  //Not user details are available in req which was injected in middelware
+  req.body.user = req.user.id;
+
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
   console.log(' req.params.bootcampId', bootcamp);
   if (!bootcamp) {
@@ -65,6 +67,20 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(
         `No bootcamp with the id of ${req.params.bootcampId}`,
         404
+      )
+    );
+  }
+
+  //Check for existin user and ignore if its admin
+  if (
+    bootcamp &&
+    bootcamp.user.toString() !== req.user.id &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to add a course to ${bootcamp._id}`,
+        400
       )
     );
   }
@@ -93,6 +109,20 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     );
   }
 
+  //Make sure user is course owner or admin
+  if (
+    course &&
+    course.user.toString() !== req.user.id &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to update this course`,
+        400
+      )
+    );
+  }
+
   course = await Course.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -116,6 +146,20 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(
         `No course with the id of ${req.params.bootcampId}`,
         404
+      )
+    );
+  }
+
+  //Make sure user is course owner or admin
+  if (
+    course &&
+    course.user.toString() !== req.user.id &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not authorized to delete this course`,
+        400
       )
     );
   }
