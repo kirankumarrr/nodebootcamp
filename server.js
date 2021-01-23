@@ -4,6 +4,8 @@ const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const colors = require('colors');
+const helmet = require('helmet');
+const xssClean = require('xss-clean');
 const expressMongoSanitize = require('express-mongo-sanitize');
 const connectDB = require('./config/db');
 const errorHandler = require('./middelware/error');
@@ -37,6 +39,11 @@ if (process.env.NODE_EVN === 'development') {
   app.use(morgan('dev'));
 }
 
+//Set Security headers
+app.use(helmet());
+
+//Prevent XSS events
+app.use(xssClean());
 //Sanitize data
 app.use(expressMongoSanitize());
 
