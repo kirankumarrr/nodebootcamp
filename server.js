@@ -4,6 +4,7 @@ const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const colors = require('colors');
+const expressMongoSanitize = require('express-mongo-sanitize');
 const connectDB = require('./config/db');
 const errorHandler = require('./middelware/error');
 
@@ -35,6 +36,9 @@ app.use(cookieParser());
 if (process.env.NODE_EVN === 'development') {
   app.use(morgan('dev'));
 }
+
+//Sanitize data
+app.use(expressMongoSanitize());
 
 //File Uploading
 app.use(fileupload());
