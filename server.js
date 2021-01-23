@@ -4,8 +4,11 @@ const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const colors = require('colors');
+const cors = require('cors');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
 const expressMongoSanitize = require('express-mongo-sanitize');
 const connectDB = require('./config/db');
 const errorHandler = require('./middelware/error');
@@ -39,11 +42,26 @@ if (process.env.NODE_EVN === 'development') {
   app.use(morgan('dev'));
 }
 
+//Enable CROS
+app.use(cors());
+
 //Set Security headers
 app.use(helmet());
 
+//Prevent adding duplicate values in array params
+// http param pollution
+app.use(hpp());
+
+//Rate Limiting
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, //10mins
+  max: 100,
+});
+app.use(limiter);
+
 //Prevent XSS events
 app.use(xssClean());
+
 //Sanitize data
 app.use(expressMongoSanitize());
 
